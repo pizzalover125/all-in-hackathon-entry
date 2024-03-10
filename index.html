@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SimpleCitation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #000;
+            color: #fff;
+            font-family: 'Roboto', sans-serif;
+            overflow: hidden;
+        }
+
+        .container {
+            max-width: 400px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+
+        input[type="text"], select, button {
+            width: 100%;
+            background-color: #fff;
+            color: #000;
+            border: none;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 16px;
+            border-radius: 10px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+
+        input[type="text"] {
+            width: 95%
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+            border-radius: 10px;
+            background-color: #fff;
+            color: #000;
+            padding: 10px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: black;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>A free, simple citator</h1>
+        <input type="text" id="urlInput" placeholder="Enter URL">
+        <select id="citationStyle">
+            <option value="mla">MLA</option>
+            <option value="apa">APA</option>
+        </select>
+        <button onclick="fetchCitation()">Cite</button>
+        <ul id="citationResult"></ul>
+    </div>
+</body>
+<script>
+    function fetchCitation() {
+        const url = document.getElementById("urlInput").value;
+        fetch(`https://api.citeas.org/product/${url}`)
+            .then(response => response.json())
+            .then(data => {
+                const citationData = data["citations"];
+                const citationStyle = document.getElementById("citationStyle").value;
+                
+                let citationResult;
+                if (citationStyle === "apa") {
+                    citationResult = citationData[0]["citation"];
+                } else if (citationStyle === "mla") {
+                    citationResult = citationData[3]["citation"];
+                }
+                
+                const citationList = document.getElementById("citationResult");
+                const listItem = document.createElement("li");
+                listItem.textContent = citationResult;
+                citationList.appendChild(listItem);
+            })
+            .catch(error => console.log(error));
+    }
+</script>
+</html>
